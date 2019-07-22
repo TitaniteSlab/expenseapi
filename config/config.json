@@ -1,0 +1,9 @@
+{
+    "BASE_URL": "http://localhost",
+    "PORT": "8082",
+    "MONGO_ADDRESS": "mongodb://192.168.1.8",
+    "MONGO_DB": "expenseapi",
+
+    "ADMIN_USER": "test@example.com",
+    "ADMIN_PASSWORD": "Abc123"
+}

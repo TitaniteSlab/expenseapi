@@ -1,0 +1,250 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Expense API v1
+  description: ''
+  contact:
+    email: me@example.com
+servers:
+  - url: http://localhost:8082/api/v1
+    description: Expense API v1
+tags:
+  - name: auth
+    description: Authentication endpoints
+  - name: users
+    description: Manage users
+  - name: expenses
+    description: Manage expense reports
+paths:
+  /token:
+    post:
+      tags:
+        - auth
+      summary: Get authorization token
+      operationId: getToken
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - BasicAuth: []
+        - BearerAuth: []
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: ''
+      operationId: createUser
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id: 
+                    type: string
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+  /expenses:
+    get:
+      tags:
+        - expenses
+      summary: List expenses
+      description: ''
+      operationId: listExpenses
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expenses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Expense'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+        - expenses
+      summary: Create expense
+      description: ''
+      operationId: createExpense
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Expense'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id: 
+                    type: string
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+  /expenses/{_id}:
+    get:
+      tags:
+        - expenses
+      summary: Retrieve an expense by ID
+      description: ''
+      operationId: getExpense
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the expense
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          description: Expense not found
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+    delete:
+      tags:
+        - expenses
+      summary: Delete expense
+      description: ''
+      operationId: deleteExpense
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the expense
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OK'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          readOnly: true
+    User:
+      type: object
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        email: 
+          type: string
+        password: 
+          type: string
+        admin: 
+          type: boolean
+    Expense:
+      type: object
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        user_id:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        description:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: number
+      required:
+        - description
+        - currency
+        - amount
+  responses:
+    OK:
+      description: >-
+        OK
+    Unauthorized:
+      description: >-
+        Unauthorized
+    Forbidden:
+      description: >-
+        Forbidden
+    BadRequest:
+      description: >
+        Bad Request
+    NotFound:
+      description: >-
+        Not Found
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: apiKey
+    BasicAuth:
+      type: http
+      scheme: basic
+security:
+  - BearerAuth: []
